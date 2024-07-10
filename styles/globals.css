@@ -2,32 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: "inter", sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer components {
+  .nav_link {
+    @apply flex items-center gap-[1rem] p-[1rem] pl-[1.5rem] md:mt-4 w-[5.2rem] slg:w-[22rem] hover:bg-[#F2F2F2] duration-500 rounded-[.8rem];
   }
+  .link {
+    @apply text-[1.5rem] font-normal;
+  }
+  .activeMenu {
+    @apply text-[1.1rem] cursor-pointer font-medium;
+  }
+  .defualtMenu {
+    @apply text-[1.1rem] cursor-pointer font-medium;
+  }
+}
+
+.activeMenu:after {
+  content: "";
+  width: 80%;
+  height: 2px;
+  background: black;
+  display: block;
+  margin: auto;
+  margin-top: 4px;
+  border-radius: 100%;
 }
