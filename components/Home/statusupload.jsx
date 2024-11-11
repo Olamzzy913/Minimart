@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { selectCurrentUser } from "@/store/user/user.selector";
 import { useSelector } from "react-redux";
-import { signOutUser, db, uid } from "@/utility/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { signOutUser, db, uid } from "@/utility/firebase";
+import { selectCurrentUser } from "@/store/user/user.selector";
+import { doc, getDoc, collection, query, getDocs } from "firebase/firestore";
+import { onAuthStateChangedListener } from "@/utility/firebase";
+// import { countNonZero } from "@techstark/opencv-js";
 
 const statusupload = () => {
   const uploads = [
@@ -46,31 +48,60 @@ const statusupload = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [username, setUsername] = useState("");
+  const [state, setState] = useState("");
+  const [language, setLanguage] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [category, setCategory] = useState("");
+  const [country, setCountry] = useState("");
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = uid();
-        const docRef = doc(db, "users", data);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const { floating_first_name, floating_last_name, username } =
-            docSnap.data();
-          setFirstName(floating_first_name);
-          setlastName(floating_last_name);
-          setUsername(username);
-        }
-      } catch (err) {
-        console.log(err, "No such document!");
+    const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        console.log(user);
+        // createUserDocumentFromAuth(user);
       }
-    };
-    fetchUsers();
+
+      const fetchUsers = async () => {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+
+            const {
+              floating_first_name,
+              floating_last_name,
+              username,
+              state,
+              category,
+              country,
+              imageUrl1,
+            } = userData;
+            console.log(docSnap.data());
+            setState(state);
+            setImageUrl(imageUrl1);
+            setCountry(country);
+            setCategory(category);
+            setFirstName(floating_first_name);
+            setlastName(floating_last_name);
+            setUsername(username);
+          }
+        } catch (err) {
+          console.log(err, "No such document!");
+        }
+      };
+      // const pickedUser =
+      //   user && (({ accessToken, email }) => ({ accessToken, email }))(user);
+
+      console.log();
+      fetchUsers();
+    });
+    return unsubscribe;
   }, []);
 
   return (
     <>
-      <div className="flex relative gap-[12rem]">
+      <div className="flex relative gap-[9rem]">
         <div className="container max-w-[50rem] w-[95%] ">
           <div className="slider-wrapper ">
             <div className="grid gap-[2rem] grid-cols-8 w-full slg:w-[54rem] justify-between">
@@ -91,19 +122,30 @@ const statusupload = () => {
         </div>
 
         {currentUser ? (
-          <div className="items-center gap-[10rem] hidden slg:flex">
-            <div className="flex gap-[1rem] cursor-pointer">
-              <img
-                className="w-[4.8rem] h-[4.8rem] rounded-full"
-                src="https://i.pinimg.com/236x/67/b2/55/67b2552cb67d4d80f8fee23f39a5c85e.jpg"
-              />
+          <div className="items-center justify-between w-full hidden slg:flex">
+            <Link
+              href="/profile"
+              className="flex items-center gap-[1rem] cursor-pointer"
+            >
+              {imageUrl ? (
+                <img
+                  className="w-[4.8rem] h-[4.8rem] rounded-full object-cover"
+                  src={imageUrl}
+                />
+              ) : (
+                <img
+                  src="/profile.jpg"
+                  className="w-[4.8rem] h-[4.8rem] rounded-full object-cover"
+                />
+              )}
+
               <div className="flex flex-col">
                 <h1 className="text-[1.4rem] font-semibold">{username}</h1>
                 <p className="text-[1.4rem] md:text-[1.4rem] font-normal text-[#818181]">
                   {firstName} {lastName}
                 </p>
               </div>
-            </div>
+            </Link>
             <Link
               href="/signin"
               className="text-[1.2rem] font-bold text-purple-900 cursor-pointer hover:text-black"

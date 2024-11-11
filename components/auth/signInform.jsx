@@ -17,9 +17,10 @@ const defaultFormFields = {
 };
 
 const signInform = () => {
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleToggle = () => {
     setShowPassword(!showPassword);
@@ -54,6 +55,8 @@ const signInform = () => {
       );
       resetFormFields();
     } catch (error) {
+      alert("Invalid data, Ensure you provide the right email and password");
+
       console.log("user sign in failed", error);
 
       return;
@@ -120,12 +123,18 @@ const signInform = () => {
               <FaFacebookF className="py-2 px-3 cursor-pointer text-[2.6rem] text-blue-900 border-[0.025rem] border-[#6A08CD] rounded-xl" />
               <FaTwitter className="py-2 px-3 cursor-pointer text-[2.6rem] text-blue-400 border-[0.025rem] border-[#6A08CD] rounded-xl" />
             </div>
-            <button
-              type="submit"
-              className="rounded-xl cursor-pointer text-white bg-gradient-to-br from-[#6A08CD] to-[#8A1BA5] px-[2.5rem] py-[.25rem]"
-            >
-              Sign in
-            </button>
+            {isLoading ? (
+              <div className=" flex items-center bg-gradient-to-br from-[#6b08cd50] to-[#891ba554] text-center  shadow cursor-pointer text-white text-[1.2rem] rounded-[1rem] px-[2.5rem] py-[1rem]">
+                <div className="loader mx-auto mr-4"></div> signing....
+              </div>
+            ) : (
+              <button
+                type="submit"
+                className="rounded-xl cursor-pointer text-white bg-gradient-to-br from-[#6A08CD] to-[#8A1BA5] px-[2.5rem] py-[.25rem]"
+              >
+                Sign in
+              </button>
+            )}
           </div>
         </div>
       </form>

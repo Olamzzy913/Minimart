@@ -4,9 +4,11 @@ import React from "react";
 import Sidenavigation from "@/components/Nav/sidenavigation";
 import Userpost from "@/components/Home/userpost";
 import Statusupload from "@/components/Home/statusupload";
+import { db, uid } from "@/utility/firebase";
 import { useDispatch, useSelector } from "react-redux";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
-import { setCurrentUser } from "@/store/user/user.reducer";
+import { currentUser, setCurrentUser } from "@/store/user/user.reducer";
 import {
   onAuthStateChangedListener,
   createUserDocumentFromAuth,
@@ -17,15 +19,29 @@ const Home = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener((user) => {
       if (user) {
-        createUserDocumentFromAuth(user);
+        console.log(user);
+        // createUserDocumentFromAuth(user);
       }
-      const pickedUser =
-        user && (({ accessToken, email }) => ({ accessToken, email }))(user);
 
-      console.log(setCurrentUser(pickedUser));
-      dispatch(setCurrentUser(pickedUser));
+      const fetchUsers = async () => {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            dispatch(setCurrentUser(userData));
+            // console.log(setCurrentUser(userData));
+          }
+        } catch (err) {
+          console.log(err, "No such document!");
+        }
+      };
+      // const pickedUser =
+      //   user && (({ accessToken, email }) => ({ accessToken, email }))(user);
+
+      console.log();
+      fetchUsers();
     });
-
     return unsubscribe;
   }, []);
 

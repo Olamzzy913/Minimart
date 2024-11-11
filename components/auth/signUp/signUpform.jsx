@@ -6,6 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitter } from "react-icons/fa";
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import AdditionalInfo from "@/components/auth/signUp/additionalInfo";
 import generateUsername from "@/utility/generateUserName";
 import {
   createAuthUserWithEmailAndPassword,
@@ -20,10 +21,11 @@ const defaultFormFields = {
 };
 
 const signUpform = () => {
+  const [uid, setUid] = useState("");
   const [password, setPassword] = useState("");
+  const [isSigned, setIsSigned] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [additionalInfo, setAdditionalInfo] = useState(false);
-  const router = useRouter();
 
   const handleToggle = () => {
     setShowPassword(!showPassword);
@@ -50,55 +52,49 @@ const signUpform = () => {
   };
 
   const handleSubmit = async (event) => {
+    // setIsLoading(true);
     event.preventDefault();
     const username = generateUsername();
+    setIsSigned(true);
 
-    try {
-      const { user } = await createAuthUserWithEmailAndPassword(
-        floating_email,
-        floating_password
-      );
+    // try {
+    //   const { user } = await createAuthUserWithEmailAndPassword(
+    //     floating_email,
+    //     floating_password
+    //   );
 
-      await createUserDocumentFromAuth(user, {
-        floating_first_name,
-        floating_last_name,
-        username,
-      });
-      resetFormFields();
-      router.push("/signin");
-    } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        alert("Cannot create user, email already in use");
-      } else {
-        console.log("user creation encountered an error", error);
-      }
-    }
+    //   const userCredential = await createUserDocumentFromAuth(user, {
+    //     floating_first_name,
+    //     floating_last_name,
+    //     username,
+    //   });
+
+    //   const signUpUser = userCredential._key.path.segments;
+    //   console.log(signUpUser[signUpUser.length - 1]);
+
+    //   setUid(signUpUser[signUpUser.length - 1]);
+    //   resetFormFields();
+    //   setIsSigned(true);
+    //   setIsLoading(false);
+    // } catch (error) {
+    //   if (error.code === "auth/email-already-in-use") {
+    //     alert("Cannot create user, email already in use");
+    //     setIsLoading(false);
+    //   } else {
+    //     console.log("user creation encountered an error", error);
+    //     setIsLoading(false);
+    //   }
+    // }
   };
 
   return (
     <>
-      <div class="fixed z-100 inset-0 overflow-y-auto" id="modal">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <div class="fixed inset-0 transition-opacity">
-            <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
-          </div>
-
-          <span class="hidden sm:inline-block sm:align-middle sm:h-screen">
-            &#8203;
-          </span>
-
-          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div class="py-4 text-left px-6">
-              <div class="flex justify-between items-center pb-4">
-                <p class="text-2xl font-bold">Your Account</p>
-                <div class="modal-close cursor-pointer z-50">
-                  <i class="fas fa-times"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AdditionalInfo
+        isSigned={isSigned}
+        setIsSigned={setIsSigned}
+        uid={uid}
+        formFields={formFields}
+      />
 
       <form class="max-w-md w-full" onSubmit={handleSubmit}>
         <div class="grid grid-cols-2 gap-6">
@@ -194,12 +190,18 @@ const signUpform = () => {
               <FaFacebookF className="py-2 px-3 cursor-pointer text-[2.6rem] text-blue-900 border-[0.025rem] border-[#6A08CD] rounded-xl" />
               <FaTwitter className="py-2 px-3 cursor-pointer text-[2.6rem] text-blue-400 border-[0.025rem] border-[#6A08CD] rounded-xl" />
             </div>
-            <button
-              type="submit"
-              className="rounded-xl cursor-pointer text-white bg-gradient-to-br from-[#6A08CD] to-[#8A1BA5] px-[2.5rem] py-[.25rem]"
-            >
-              Sign up
-            </button>
+            {isLoading ? (
+              <div className=" flex items-center bg-gradient-to-br from-[#6b08cd50] to-[#891ba554] text-center  shadow cursor-pointer text-white text-[1.2rem] rounded-[1rem] px-[2.5rem] py-[1rem]">
+                <div className="loader mx-auto mr-4"></div> signing....
+              </div>
+            ) : (
+              <button
+                type="submit"
+                className="rounded-xl cursor-pointer text-white bg-gradient-to-br from-[#6A08CD] to-[#8A1BA5] px-[2.5rem] py-[.25rem]"
+              >
+                Sign up
+              </button>
+            )}
           </div>
         </div>
       </form>

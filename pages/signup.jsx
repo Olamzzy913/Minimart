@@ -1,9 +1,10 @@
+/* eslint-disable */
 import React from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import SignUpform from "@/components/auth/signUpform";
+import SignUpform from "@/components/auth/signUp/signUpform";
 
 const signup = () => {
   const { systemTheme, theme, setTheme } = useTheme();
@@ -94,33 +95,33 @@ const signup = () => {
           <SignUpform />
         </div>
         <div className="relative my-[8rem] md:my-0">
-          <div className="absolute z-50 top-[4rem] -left-[12rem]">
+          <div className="absolute z-40 top-[4rem] -left-[12rem]">
             <div className="infoCart relative">
-              <p className="shadow-md p-2 md:p-4 rounded-xl w-[16rem] text-black absolute bg-white z-50 -bottom-[2.7rem] left-[4.5rem]">
+              <p className="shadow-md p-2 md:p-4 rounded-xl w-[16rem] text-black absolute bg-white z-40 -bottom-[2.7rem] left-[4.5rem]">
                 Post your product yourself
               </p>
               <img
-                src="https://media.istockphoto.com/id/1497187234/photo/portrait-of-cheerful-young-cashier-facing-the-camera-smiling-while-scanning-products-for-a.webp?b=1&s=170667a&w=0&k=20&c=RhvMLHTxmyAgPQVJK0-0D-Ets6DBjxMweisImj_drlw="
+                src="https://images.unsplash.com/photo-1601598853072-3969239a6b9e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGZyaWVuZHMlMjBpbiUyMHN1cGVybWFya2V0fGVufDB8fDB8fHww"
                 alt=""
                 className="w-[9rem] h-[9rem] hidden md:block z-0 p-3 rounded-full border-[.15rem] border-[#222] border-dashed"
               />
             </div>
           </div>
-          <div className="absolute z-50 -top-[4.5rem] -right-[2rem]">
+          <div className="absolute z-40 -top-[4.5rem] -right-[2rem]">
             <div className="infoCart relative">
-              <p className="shadow-md p-2 md:p-4 rounded-xl w-[12rem] text-black absolute bg-white z-50 -bottom-[1.7rem] -left-[8rem]">
+              <p className="shadow-md p-2 md:p-4 rounded-xl w-[12rem] text-black absolute bg-white z-40 -bottom-[1.7rem] -left-[8rem]">
                 Connect with friends
               </p>
               <img
-                src="https://media.istockphoto.com/id/1618826807/photo/business-manager-training-a-new-retail-clerk-at-a-supermarket.webp?b=1&s=170667a&w=0&k=20&c=cBXtlvQ6sx0kYlcF_T30g1mqYkrgUUN6qdPlxMkZxcw="
+                src="https://plus.unsplash.com/premium_photo-1663040282353-06818b344206?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDh8fHxlbnwwfHx8fHw%3D"
                 alt=""
                 className="w-[9rem] h-[9rem] hidden md:block z-0 p-3 rounded-full border-[.15rem] border-[#222] border-dashed"
               />
             </div>
           </div>
-          <div className="absolute z-50 bottom-[1.5rem] -right-[8rem]">
+          <div className="absolute z-40 bottom-[1.5rem] -right-[8rem]">
             <div className="infoCart relative">
-              <p className="shadow-md p-2 md:p-4 rounded-xl w-[18rem] md:w-[28rem] absolute text-black bg-white z-50 -bottom-[1.7rem] right-[4rem]">
+              <p className="shadow-md p-2 md:p-4 rounded-xl w-[18rem] md:w-[28rem] absolute text-black bg-white z-40 -bottom-[1.7rem] right-[4rem]">
                 Get direct access with the seller through chats and call
               </p>
               <img
@@ -133,7 +134,7 @@ const signup = () => {
           <img
             src="https://images.unsplash.com/photo-1676730049571-24305f4dcff7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWluaW1hcnR8ZW58MHx8MHx8fDA%3D"
             alt=""
-            className="w-[20rem] h-[20rem] md:w-[30rem] md:h-[30rem] lg:w-[40rem] lg:h-[40rem] rounded-full -z-50"
+            className="w-[20rem] h-[20rem] md:w-[30rem] md:h-[30rem] lg:w-[40rem] lg:h-[40rem] rounded-full -z-40"
           />
         </div>
       </div>

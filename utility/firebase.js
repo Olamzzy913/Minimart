@@ -65,36 +65,33 @@ export const addCollectionAndDocuments = async (
 
 let currentUserUid;
 
-export const createUserDocumentFromAuth = async (
-  userAuth,
-  additionalInformation = {}
+// Function to create a user and store additional data
+export const createUserAndStoreData = async (
+  email,
+  password,
+
+  basicData,
+  additionalData
 ) => {
-  if (!userAuth) return;
+  try {
+    // Step 1: Create the user
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
 
-  const userDocRef = doc(db, "users", userAuth.uid);
+    // Step 2: Add additional data to Firestore
+    const userDocRef = doc(db, "users", user.uid); // Use the user's UID as the document ID
+    await setDoc(userDocRef, { ...basicData, ...additionalData });
 
-  const userSnapshot = await getDoc(userDocRef);
-
-  if (!userSnapshot.exists()) {
-    const { floating_first_name, floating_last_name, username, email } =
-      userAuth;
-    const createdAt = new Date();
-
-    try {
-      await setDoc(userDocRef, {
-        floating_first_name,
-        floating_last_name,
-        username,
-        email,
-        createdAt,
-        ...additionalInformation,
-      });
-    } catch (error) {
-      console.log("error creating the user", error.message);
-    }
+    console.log("User and additional data stored successfully");
+    return user;
+  } catch (error) {
+    console.error("Error during user creation or data storage:", error);
+    throw error;
   }
-
-  return userDocRef;
 };
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
