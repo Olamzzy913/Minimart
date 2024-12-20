@@ -18,6 +18,7 @@ export default function App({ Component, pageProps }) {
         console.log(user.uid);
         trackUserStatus(user.uid);
       } else {
+        router.push("/signin");
       }
     });
   }, []);
@@ -25,7 +26,11 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user && router.pathname !== "/signin") {
+      if (
+        !user &&
+        router.pathname !== "/signin" &&
+        router.pathname !== "/signup"
+      ) {
         router.push("/signin");
       }
     });

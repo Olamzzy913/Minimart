@@ -111,19 +111,19 @@ function reelFormatTimestamp(timestamp) {
     return "now";
   } else if (timeDiffInSeconds < 3600) {
     const minutes = Math.floor(timeDiffInSeconds / 60);
-    return `${minutes}m`;
+    return `${minutes} m`;
   } else if (timeDiffInSeconds < 86400) {
     const hours = Math.floor(timeDiffInSeconds / 3600);
-    return `${hours}h`;
+    return `${hours} h`;
   } else if (timeDiffInSeconds < 604800) {
     const days = Math.floor(timeDiffInSeconds / 86400);
-    return `${days}d`;
+    return `${days} d`;
   } else if (timeDiffInSeconds < 2419200) {
     const weeks = Math.floor(timeDiffInSeconds / 604800);
-    return `${weeks}w`;
+    return `${weeks} w`;
   } else {
     const months = Math.floor(timeDiffInSeconds / 2419200);
-    return `${months}mon`;
+    return `${months} Mon`;
   }
 }
 export {

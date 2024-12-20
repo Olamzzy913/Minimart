@@ -20,6 +20,10 @@ const Post = ({ isActive, setIsActive }) => {
   const fileInputRef1 = useRef(null);
   const [file1, setFile1] = useState(null);
   const [userUid, setUserUid] = useState(null);
+  const [cost, setCost] = useState(null);
+  const [productType, setProductType] = useState(null);
+  const [product, setProduct] = useState(null);
+  const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [messaageContent, setMessaageContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -75,42 +79,105 @@ const Post = ({ isActive, setIsActive }) => {
     console.log(file1);
   };
 
+  async function removeBg(file) {
+    const API_KEY = "ME2GNYmWtrWFXihkApK8P7m2";
+
+    const formData = new FormData();
+    formData.append("size", "auto");
+    formData.append("image_file", file);
+
+    try {
+      const response = await fetch("https://api.remove.bg/v1.0/removebg", {
+        method: "POST",
+        headers: { "X-Api-Key": API_KEY },
+        body: formData,
+      });
+
+      if (response.ok) {
+        return await response.arrayBuffer();
+      } else {
+        const errorData = await response.json();
+        throw new Error(
+          `${response.status}: ${
+            errorData.errors[0]?.title || response.statusText
+          }`
+        );
+      }
+    } catch (error) {
+      console.error("Error removing background:", error.message);
+      throw error;
+    }
+  }
+
   const handleUpload = async () => {
-    console.log("Posting reel...");
     setIsLoading(true);
 
     try {
-      let imageUrl1 = null;
+      if (!file1) {
+        alert("Profile Image is not selected.");
+        throw new Error("File upload failed: No file provided");
+      }
 
-      if (file1) {
+      let imageUrl = null;
+
+      if (category === "shop") {
+        try {
+          const bgRemovedBuffer = await removeBg(file1);
+          const bgRemovedBlob = new Blob([bgRemovedBuffer], {
+            type: "image/png",
+          });
+          const fileName1 = `${new Date().getTime()}_${bgRemovedBlob.name}`;
+          const storageRef1 = ref(storage, `images/${fileName1}`);
+          const snapshot1 = await uploadBytes(storageRef1, bgRemovedBlob);
+          imageUrl = await getDownloadURL(snapshot1.ref);
+
+          await addDoc(collection(db, "shopData", userUid, "post"), {
+            uid: userUid,
+            product,
+            productCategory: productType,
+            productImage: imageUrl,
+            cost: cost,
+            description: description,
+            timestamp: serverTimestamp(),
+          });
+
+          console.log("Background removed and uploaded successfully.");
+        } catch (removeBgError) {
+          console.error(
+            "Failed to process image with Remove.bg:",
+            removeBgError
+          );
+          // Fall back to the original image if Remove.bg fails
+        }
+      }
+
+      if (category === "reel") {
         const fileName1 = `${new Date().getTime()}_${file1.name}`;
         const storageRef1 = ref(storage, `images/${fileName1}`);
         const snapshot1 = await uploadBytes(storageRef1, file1);
-        imageUrl1 = await getDownloadURL(snapshot1.ref);
+        imageUrl = await getDownloadURL(snapshot1.ref);
 
         await addDoc(collection(db, "reels", userUid, "post"), {
           uid: userUid,
           likes: [],
           comments: [],
-          reel: imageUrl1,
+          reel: imageUrl,
           messaageContent,
           timestamp: serverTimestamp(),
         });
-      } else {
-        alert("Profile Image is not selected.");
-        throw new Error("File upload failed: No file provided");
       }
 
+      console.log("Data saved successfully.");
       setIsActive(true);
     } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        alert("Cannot create user, email already in use");
-      } else {
-        console.error("User creation encountered an error", error);
-      }
+      console.error("Error occurred:", error.message);
+      alert("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
       setCategory(null);
+      setCost(null);
+      setProduct(null);
+      setDescription(null);
       setMessaageContent("");
       setSelectedImage1(null);
       setFile1(null);
@@ -131,26 +198,22 @@ const Post = ({ isActive, setIsActive }) => {
 
   return (
     <div
-      id="authentication-modal"
-      role="dialog"
-      aria-hidden="true"
       onClick={(e) => e.target === e.currentTarget && closeModal()}
       className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-[rgba(45,27,206,0.12)] backdrop-blur-[2px]"
     >
       <div className="relative bg-white flex flex-col items-center rounded-[1rem] shadow px-4 py-[2rem] md:pb-[4rem] mx-4 w-full max-w-[36rem] md:max-w-[42rem]">
         <div className="w-[28rem] md:w-[32rem]">
-          <div className="flex justify-between w-full items-center h-[52rem] flex-col">
-            <div className="flex flex-col w-full ">
-              <div className="flex items-center w-full mb-6">
-                <h1 className="text-[1.4rem] mx-auto font-medium">
-                  New Highlights
-                </h1>
-                <MdOutlineClose
-                  className=" text-[2rem] cursor-pointer"
-                  onClick={closeModal}
-                />
-              </div>
-
+          <div className="flex justify-between w-full items-center h-[54rem] flex-col">
+            <div className="flex items-center w-full mb-6">
+              <h1 className="text-[1.4rem] mx-auto font-medium">
+                New Highlights
+              </h1>
+              <MdOutlineClose
+                className=" text-[2rem] cursor-pointer"
+                onClick={closeModal}
+              />
+            </div>
+            <div className="flex flex-col w-full  mb-[1rem] h-[50rem] overflow-hidden overflow-y-scroll">
               <div className=" cursor-pointer flex flex-col items-center justify-center mx-auto">
                 {selectedImage1 ? (
                   <img
@@ -203,16 +266,69 @@ const Post = ({ isActive, setIsActive }) => {
                   <option value="reel">Reel</option>
                 </select>
 
-                <input
-                  type="text"
-                  name="messaageContent"
-                  value={messaageContent}
-                  onChange={(e) => {
-                    setMessaageContent(e.target.value);
-                  }}
-                  placeholder="What's on your mind"
-                  className=" px-8 py-5 mt-[2rem] w-full outline-none border rounded-xl text-[1.2rem] focus:outline-none focus:border-indigo-300"
-                />
+                {category === "shop" ? (
+                  <div className="">
+                    <select
+                      value={productType}
+                      name="productType"
+                      className=" px-8 py-5 cursor-pointer mt-[2rem] w-full outline-none border rounded-xl text-[1.2rem] focus:outline-none focus:border-indigo-300"
+                      onChange={(e) => {
+                        setProductType(e.target.value);
+                      }}
+                    >
+                      <option value="">--Select product type--</option>
+                      <option value="collections">Collections</option>
+                      <option value="foods">Foods</option>
+                      <option value="utensils">Utensils</option>
+                      <option value="skin care">Skin care</option>
+                      <option value="services">Services</option>
+                    </select>
+
+                    <input
+                      type="text"
+                      name="product"
+                      value={product}
+                      onChange={(e) => {
+                        setProduct(e.target.value);
+                      }}
+                      placeholder="Product name e.g sneaker"
+                      className=" px-8 py-5 mt-[2rem] w-full outline-none border rounded-xl text-[1.2rem] focus:outline-none focus:border-indigo-300"
+                    />
+
+                    <input
+                      type="text"
+                      name="description"
+                      value={description}
+                      onChange={(e) => {
+                        setDescription(e.target.value);
+                      }}
+                      placeholder="e.g., Amazing product that have served billions"
+                      className=" px-8 py-5 mt-[2rem] w-full outline-none border rounded-xl text-[1.2rem] focus:outline-none focus:border-indigo-300"
+                    />
+
+                    <input
+                      type="number"
+                      name="cost"
+                      value={cost}
+                      onChange={(e) => {
+                        setCost(e.target.value);
+                      }}
+                      placeholder="Price e.g $900"
+                      className=" px-8 py-5 mt-[2rem] w-full outline-none border rounded-xl text-[1.2rem] focus:outline-none focus:border-indigo-300"
+                    />
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    name="messaageContent"
+                    value={messaageContent}
+                    onChange={(e) => {
+                      setMessaageContent(e.target.value);
+                    }}
+                    placeholder="What's on your mind"
+                    className=" px-8 py-5 mt-[2rem] w-full outline-none border rounded-xl text-[1.2rem] focus:outline-none focus:border-indigo-300"
+                  />
+                )}
               </div>
             </div>
 

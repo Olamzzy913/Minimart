@@ -10,31 +10,35 @@ const Cartcard = ({ cartItem }) => {
 
   const {
     productImage,
-    productPrice,
-    productSubTitle,
-    productTitle,
+    cost,
+    description,
+    product,
     quantity,
-    sellerName,
-    sellerPic,
+    username,
+    imageUrl1,
   } = cartItem;
 
   return (
     <>
       <div className="cart flex justify-between gap-[5rem] items-center ">
-        <img src={productImage} className="w-[4rem] h-[4rem]" alt="" />
+        <img
+          src={productImage}
+          className="w-[4rem] h-[4rem] object-cover"
+          alt=""
+        />
         <div className="flex justify-between gap-[1.5rem] smi:gap-[6rem] md:gap-[9rem] items-center border-b py-6 ">
           <div className="cart-details w-[9rem] smi:w-[12rem]">
-            <h1 className="font-bold">{productTitle}</h1>
+            <h1 className="font-bold">{product}</h1>
             <p className="font-light text-[.8rem]">
-              {productSubTitle}
+              {description.substring(0, 20)}
             </p>
             <div className="flex gap-2 mt-1 items-center">
               <img
-                src={sellerPic}
-                className="w-[1.2rem] h-[1.2rem] rounded-full"
+                src={imageUrl1}
+                className="w-[1.2rem] h-[1.2rem] rounded-full object-cover"
                 alt=""
               />
-              <p className="font-semibold text-1.8rem">{sellerName}</p>
+              <p className="font-semibold text-1.8rem">{username}</p>
             </div>
           </div>
 
@@ -50,7 +54,7 @@ const Cartcard = ({ cartItem }) => {
             />
           </div>
           <div className="amount">
-            <h1 className="font-bold"> {quantity * productPrice} USD</h1>
+            <h1 className="font-bold"> {quantity * cost} USD</h1>
           </div>
           <MdDelete
             onClick={clearItemFromCart}

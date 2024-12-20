@@ -11,6 +11,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.5",
     "@techstark/opencv-js": "^4.9.0-release.3",
+    "axios": "^1.7.7",
     "firebase": "^10.12.0",
     "next": "14.2.3",
     "next-themes": "^0.3.0",

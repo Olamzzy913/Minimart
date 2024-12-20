@@ -1,10 +1,8 @@
 // pages/messages.js
-import Head from "next/head";
-import Link from "next/link";
-import Image from "next/image";
+
 import React from "react";
-import Sidenavigation from "@/components/Nav/sidenavigation";
 import { useEffect, useState, useRef } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 import { auth, db, signOutUser } from "@/utility/firebase";
 import { IoMdSend } from "react-icons/io";
 import { RiLogoutCircleRLine, RiChatNewFill } from "react-icons/ri";
@@ -37,7 +35,7 @@ import {
   firestoreTimestampToDate,
 } from "@/utility/date-time-format/format";
 
-export default function messages() {
+export default function Messages() {
   const [currentUser, setCurrentUser] = useState("");
   const [username, setUsername] = useState("");
   const [userResult, setUserResult] = useState(null);
@@ -59,10 +57,10 @@ export default function messages() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(null);
   const router = useRouter();
   const storage = getStorage();
   const [isSelectedUserActive, setIsSelectedUserActive] = useState([]);
+  const [isMobile, setIsMobile] = useState(null);
 
   const sendMessage = async () => {
     const user = auth.currentUser;
@@ -170,7 +168,6 @@ export default function messages() {
     try {
       const userData = await getLastSeen(uid);
       setIsSelectedUserActive(userData);
-      console.log(userData);
       // Do something with the user data
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -417,14 +414,15 @@ export default function messages() {
 
   return (
     <>
-      <div class="flex h-svh antialiased text-gray-800 md:hidden">
+      <div class="flex h-svh antialiased text-gray-800 md:hidden ">
+        {/* <div class="flex flex-row h-full w-full overflow-x-hidden relative"> */}
         {isMobile && (
-          <div class="flex  flex-col py-1 px-2 w-[40%] bg-white flex-shrink-0 relative">
+          <div class="flex  flex-col py-1 px-2 bg-white flex-shrink-0 relative w-full">
             <RiChatNewFill
               onClick={() => {
                 setAddNewChat(!addNewChat);
               }}
-              className="absolute z-50 bottom-4 right-6 text-white bg-[#13C730] hover:dropShadow text-[3rem] p-[.8rem] rounded-full cursor-pointer"
+              className="absolute z-50 bottom-4 right-6 text-white bg-[#13C730] hover:dropShadow text-[4rem] p-[.8rem] rounded-full cursor-pointer"
             />
             <div class="flex flex-col mt-8 relative">
               <div
@@ -475,6 +473,13 @@ export default function messages() {
                 )}
               </div>
 
+              <div className="flex justify-between ">
+                <h2 className="text-[1.15rem]">Users</h2>
+                <RiLogoutCircleRLine
+                  className=" text-[1.5rem] cursor-pointer"
+                  onClick={signOutUser}
+                />
+              </div>
               <p className="text-[1.15rem]">{currentUser}</p>
               <div className="flex items-center bg-[#E8E7E7] p-[1rem] rounded-xl mt-2">
                 <IoSearch className="text-[#B8B5B5] text-[2rem]" />
@@ -488,11 +493,11 @@ export default function messages() {
                 {users.map((user) => (
                   <button
                     className="flex flex-row items-center hover:bg-gray-100 px-2"
-                    key={user.floating_email}
+                    key={user.email}
                     onClick={() =>
                       setSelectedUser(user) ||
-                      fetchUserData(user.id) ||
                       setIsMobile(!isMobile) ||
+                      fetchUserData(user.id) ||
                       cancelSelectedFile() ||
                       setMessage("") ||
                       setIsTyping(false) ||
@@ -599,7 +604,6 @@ export default function messages() {
             </div>
           </div>
         )}
-
         {!isMobile && (
           <div class="flex flex-col flex-auto h-full p-6">
             {file && (
@@ -638,36 +642,18 @@ export default function messages() {
                 </div>
               </>
             )}
-            {!selectedUser && !file && (
-              <div class="flex flex-col items-center gap-2 justify-center flex-auto flex-shrink-0 rounded-2xl h-full ">
-                <h1 className="text-[1.5rem] mb-6">Select User to chat with</h1>
-                <div className="flex gap-2 justify-center">
-                  <img
-                    className="w-[40%] rounded-xl"
-                    src="https://media.istockphoto.com/id/1490133656/photo/young-woman-using-a-laptop-while-working-from-home.webp?b=1&s=170667a&w=0&k=20&c=KXB26GKytBWciFOW1Hef0p5mI8Sb1eesevwdAo3_EG8="
-                  />
-                  <img
-                    className="w-[40%] rounded-xl"
-                    src="https://media.istockphoto.com/id/1770666963/photo/portrait-of-handsome-caucasian-man-looking-at-laptop-working-online-from-his-home.webp?b=1&s=170667a&w=0&k=20&c=QYmjudsaVH-i-H0GkkeHH2WeJW-YP8KwSl9T4qh8rvs="
-                  />
-                </div>
-                <h1 className="font-bold text-[1rem]">
-                  Share ideas together. Get connected Get updated
-                </h1>
-                <button
-                  onClick={() => {
-                    setAddNewChat(!addNewChat);
-                  }}
-                  className="bg-green-600 p-3 text-white rounded-md hover:bg-green-800"
-                >
-                  Create Chat with new user
-                </button>
-              </div>
-            )}
+
             {selectedUser && !file && (
               <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-[#F2EDE7] h-full ">
                 <div className="bg-white p-4 flex items-center justify-between">
-                  <div className="flex ">
+                  <div className="flex items-center  ">
+                    <FaArrowLeft
+                      className="text-[1.2rem] mr-3"
+                      onClick={() => {
+                        setIsMobile(!isMobile);
+                      }}
+                    />
+
                     <img
                       src={selectedUser?.imageUrl1}
                       className="h-[4rem] w-[4rem] object-cover rounded-full"
@@ -718,7 +704,7 @@ export default function messages() {
                                       {!msg.audio && msg.img && !msg.text && (
                                         <>
                                           <img
-                                            className=" w-[24rem] h-[26rem] rounded-md object-cover"
+                                            className=" w-[24rem] h-[20rem] rounded-md object-cover"
                                             src={msg.img}
                                           />
                                           <div
@@ -739,7 +725,7 @@ export default function messages() {
                                       {!msg.audio && msg.img && msg.text && (
                                         <>
                                           <img
-                                            className=" w-[24rem] h-[26rem] mb-1 rounded-md object-cover"
+                                            className=" w-[24rem] h-[20rem] rounded-md object-cover"
                                             src={msg.img}
                                           />
                                           <div
@@ -788,7 +774,7 @@ export default function messages() {
                                       {!msg.audio && msg.img && !msg.text && (
                                         <>
                                           <img
-                                            className=" w-[24rem] h-[26rem] rounded-md object-cover"
+                                            className=" w-[24rem] h-[20rem] rounded-md object-cover"
                                             src={msg.img}
                                           />
                                           <div
@@ -809,7 +795,7 @@ export default function messages() {
                                       {!msg.audio && msg.img && msg.text && (
                                         <>
                                           <img
-                                            className=" w-[24rem] h-[26rem] rounded-md object-cover mb-1"
+                                            className=" w-[24rem] h-[20rem] rounded-md object-cover"
                                             src={msg.img}
                                           />
                                           <div
@@ -903,19 +889,20 @@ export default function messages() {
                       style={{ display: "none" }}
                       onChange={handleFileChange}
                     />
+                    <IoCameraOutline className="text-[3rem] hover:bg-gray-100 cursor-pointer p-1 rounded-xl" />
                     <IoAdd
                       onClick={handleButtonClick}
-                      className="text-[2.5rem] hover:bg-gray-100 cursor-pointer p-1 rounded-xl"
+                      className="text-[3rem] hover:bg-gray-100 cursor-pointer p-1 rounded-xl"
                     />
                     {isTyping ? (
                       <IoMdSend
                         onClick={sendMessage}
-                        className="text-white bg-[#13C730]  text-[2.8rem] w-[3.2rem] py-[.8rem] rounded-full cursor-pointer"
+                        className="text-white bg-[#13C730]  text-[3.6rem] w-[4.8rem] py-[1rem] rounded-full cursor-pointer"
                       />
                     ) : (
                       <MdOutlineMic
                         onClick={startRecording}
-                        className="text-white bg-[#13C730] text-[2.8rem] w-[3.2rem] py-[.8rem] rounded-full cursor-pointer"
+                        className="text-white bg-[#13C730] text-[3.6rem] w-[4.8rem] py-[1rem] rounded-full cursor-pointer"
                       />
                     )}
                   </div>

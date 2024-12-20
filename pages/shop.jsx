@@ -7,16 +7,17 @@ import { IoSearch } from "react-icons/io5";
 import { TiShoppingCart } from "react-icons/ti";
 import { CartContext } from "@/store/cart/cart.context.js";
 
-const filter = ["Collections", "Foods", "Utensils", "Skin care", "Services"];
+const filter = ["collections", "foods", "utensils", "skin care", "services"];
 
 const Shop = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("");
-  const { cartItems,cartCount } = useContext(CartContext);
+  const { cartItems, cartCount } = useContext(CartContext);
 
   const handleClick = (item, index) => {
     setActiveIndex(index);
     setSelectedFilter(item);
+    console.log(item, index);
   };
 
   const [inputValue, setInputValue] = useState("");
@@ -74,13 +75,15 @@ const Shop = () => {
                   />
                 </div>
                 <div className="filter">
-                  <ul className="flex gap-[3rem]">
+                  <ul className="flex  gap-[3rem]">
                     {filter.map((item, index) => (
                       <li
                         key={index}
                         onClick={() => handleClick(item, index)}
                         className={
-                          activeIndex === index ? "activeMenu" : "defualtMenu"
+                          activeIndex === index
+                            ? "activeMenu capitalize"
+                            : "defualtMenu capitalize"
                         }
                       >
                         {item}

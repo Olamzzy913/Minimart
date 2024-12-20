@@ -48,16 +48,38 @@ const UserPost = () => {
         );
 
         onSnapshot(reelsQuery, (reelsSnapshot) => {
-          reelsSnapshot.forEach((reelDoc) => {
-            setUserUpdate((prevProfile) => [
-              // ...prevProfile,
+          setUserUpdate((prevProfile) => {
+            const newProfiles = [];
 
-              { ...reelDoc.data(), ...userDoc.data() }, // Combine reel + user data if needed
-            ]);
+            reelsSnapshot.forEach((reelDoc) => {
+              const newProfile = {
+                ...reelDoc.data(),
+                ...userDoc.data(),
+                id: reelDoc.id,
+              };
+              if (
+                !prevProfile.some((profile) => profile.id === newProfile.id)
+              ) {
+                newProfiles.push(newProfile);
+              }
+            });
+
+            return [...prevProfile, ...newProfiles];
           });
 
           console.log(userUpdate);
         });
+        // onSnapshot(reelsQuery, (reelsSnapshot) => {
+        //   reelsSnapshot.forEach((reelDoc) => {
+        //     setUserUpdate((prevProfile) => [
+        //       ...prevProfile,
+
+        //       { ...reelDoc.data(), ...userDoc.data() }, // Combine reel + user data if needed
+        //     ]);
+        //   });
+
+        //   console.log(userUpdate);
+        // });
       }
 
       const currentUserDoc = await getDoc(doc(db, "users", currentUserUid));
@@ -95,7 +117,6 @@ const UserPost = () => {
 
       querySnapshot.forEach((document) => {
         selectedReelRef = doc(db, "reels", reelId, "post", document.id); // Correct document reference
-        console.log(document.id, " => ", document.data());
       });
 
       if (!selectedReelRef) {
