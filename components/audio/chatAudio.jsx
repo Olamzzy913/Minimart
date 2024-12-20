@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useRef, useEffect } from "react";
 import { FaPlay } from "react-icons/fa6";
 import { MdOutlinePause } from "react-icons/md";

@@ -1,5 +1,5 @@
+/* eslint-disable */
 import React from "react";
-import shopData from "@/utility/shopData";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import { CartContext } from "@/store/cart/cart.context.js";

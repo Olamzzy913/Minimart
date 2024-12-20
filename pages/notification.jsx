@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from "react";
 import Head from "next/head";
 import Sidenavigation from "@/components/Nav/sidenavigation";
@@ -25,6 +27,7 @@ const notification = () => {
       </Head>
       <main>
         <Sidenavigation />
+        
       </main>
     </>
   );

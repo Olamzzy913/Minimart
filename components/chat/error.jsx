@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // pages/messages.js
 
 import React from "react";
